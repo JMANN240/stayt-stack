@@ -14,7 +14,7 @@ futures = "0.3.31"
 hmac = "0.12.1"
 itertools = "0.14.0"
 jwt = { workspace = true }
-{{project-name}}-lib = { path = "../{{project-name}}-lib" }
+"{{project-name}}-lib" = { path = "../{{project-name}}-lib" }
 rand_core = { version ="0.6.4", features = ["getrandom"] }
 serde = { workspace = true }
 sha2 = "0.10.9"
