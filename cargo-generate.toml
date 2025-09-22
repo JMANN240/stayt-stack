@@ -2,4 +2,5 @@
 ignore = [
   "README.md",
   "roboto.ttf",
+  "db/"
 ]
