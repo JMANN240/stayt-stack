@@ -7,7 +7,7 @@ use {{crate_name}}_lib::ReadUser;
 
 use crate::{AppState, db::user::DbUser, util::internal_server_error};
 
-pub async fn user(
+pub async fn get_user(
     State(state): State<AppState>,
     Path(id): Path<i64>,
 ) -> Result<Json<ReadUser>, (StatusCode, String)> {

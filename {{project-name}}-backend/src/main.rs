@@ -8,8 +8,6 @@ use axum::{
 use clap::{Args, Parser};
 use dotenvy::dotenv;
 use hmac::{Hmac, Mac};
-use itertools::Itertools;
-use serde::{Deserialize, de::IntoDeserializer};
 use sha2::Sha256;
 use sqlx::SqlitePool;
 use tokio::net::{TcpListener, UnixListener};
@@ -21,6 +19,7 @@ use crate::api::{
 
 mod api;
 mod db;
+mod util;
 
 #[derive(Parser)]
 struct Cli {

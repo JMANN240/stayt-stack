@@ -1,14 +1,9 @@
-use pages::{home::Home, levels::Levels};
 use yew::prelude::*;
 use yew_router::prelude::*;
 
 use crate::components::navbar::Navbar;
 use crate::components::token_provider::TokenProvider;
-use crate::pages::level::Level;
-use crate::pages::login::Login;
-use crate::pages::logout::Logout;
-use crate::pages::register::Register;
-use crate::pages::upload::Upload;
+use crate::pages::{login::LoginPage, logout::LogoutPage, register::RegisterPage, root::RootPage};
 
 pub mod components;
 pub mod pages;
@@ -28,7 +23,7 @@ pub enum Route {
 
 fn switch(routes: Route) -> Html {
     match routes {
-        Route::Home => {
+        Route::Root => {
             html! { <RootPage /> }
         },
         Route::Register => {

@@ -1,4 +1,4 @@
-use gloo_storage::{LocalStorage, Storage, errors::StorageError};
+use gloo::storage::{LocalStorage, Storage, errors::StorageError};
 use yew::prelude::*;
 
 #[derive(Debug, PartialEq, Eq, Clone)]

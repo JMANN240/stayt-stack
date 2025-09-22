@@ -1,4 +1,4 @@
-use gloo_net::http::Request;
+use gloo::net::http::Request;
 use {{crate_name}}_lib::{RegisterRequest, TokenRequest};
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
@@ -9,7 +9,7 @@ use crate::{
 };
 
 #[function_component]
-pub fn Register() -> Html {
+pub fn RegisterPage() -> Html {
     let navigator = use_navigator().unwrap();
     let token_context = use_context::<TokenContext>().expect("no token found");
 
@@ -119,7 +119,7 @@ pub fn Register() -> Html {
                         match token_response_status {
                             200 => {
                                 token_context.dispatch(TokenAction::Set(token_response_text));
-                                navigator.push(&Route::Home);
+                                navigator.push(&Route::Root);
                             },
                             _ => {
                                 error_text.set(Some(token_response_text));

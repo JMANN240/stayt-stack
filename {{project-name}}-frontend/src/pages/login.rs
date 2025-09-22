@@ -1,5 +1,4 @@
-use gloo_net::http::Request;
-use gloo_storage::{LocalStorage, Storage};
+use gloo::{net::http::Request, storage::{LocalStorage, Storage}};
 use {{crate_name}}_lib::TokenRequest;
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
@@ -11,7 +10,7 @@ use crate::{
 };
 
 #[function_component]
-pub fn Login() -> Html {
+pub fn LoginPage() -> Html {
     let navigator = use_navigator().unwrap();
     let token_context = use_context::<TokenContext>().expect("no token found");
 

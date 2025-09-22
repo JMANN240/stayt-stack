@@ -3,7 +3,7 @@ use {{crate_name}}_lib::RegisterRequest;
 
 use crate::{AppState, db::user::DbUser, util::internal_server_error};
 
-pub async fn register(
+pub async fn post_register(
     State(state): State<AppState>,
     Json(register_request): Json<RegisterRequest>,
 ) -> Result<(StatusCode, String), (StatusCode, String)> {

@@ -4,7 +4,7 @@ use {{crate_name}}_lib::{TokenClaims, TokenRequest};
 
 use crate::{AppState, db::user::DbUser, util::internal_server_error};
 
-pub async fn token(
+pub async fn post_token(
     State(state): State<AppState>,
     Json(token_request): Json<TokenRequest>,
 ) -> Result<(StatusCode, String), (StatusCode, String)> {

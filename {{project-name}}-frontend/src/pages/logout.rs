@@ -1,4 +1,4 @@
-use gloo_storage::{LocalStorage, Storage};
+use gloo::storage::{LocalStorage, Storage};
 use yew::prelude::*;
 use yew_router::hooks::use_navigator;
 
@@ -8,13 +8,13 @@ use crate::{
 };
 
 #[function_component]
-pub fn Logout() -> Html {
+pub fn LogoutPage() -> Html {
     let navigator = use_navigator().unwrap();
     let token_context = use_context::<TokenContext>().expect("no token found");
 
     token_context.dispatch(TokenAction::Clear);
     LocalStorage::delete("token");
-    navigator.replace(&Route::Home);
+    navigator.replace(&Route::Root);
 
     html! {}
 }
