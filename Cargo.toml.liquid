@@ -1,0 +1,7 @@
+[workspace]
+resolver = "3"
+members = ["{{project-name}}-backend", "{{project-name}}-frontend", "{{project-name}}-lib"]
+
+[workspace.dependencies]
+jwt = "0.16.0"
+serde = { version = "1.0.219" }

@@ -1,0 +1,21 @@
+use axum::{
+    Json,
+    extract::{Path, State},
+    http::StatusCode,
+};
+use {{crate_name}}_api::ReadUser;
+
+use crate::{AppState, db::user::DbUser, util::internal_server_error};
+
+pub async fn user(
+    State(state): State<AppState>,
+    Path(id): Path<i64>,
+) -> Result<Json<ReadUser>, (StatusCode, String)> {
+    let maybe_db_user = DbUser::get_by_id(&state.pool, id)
+        .await
+        .map_err(internal_server_error)?;
+
+    let db_user = maybe_db_user.ok_or((StatusCode::NOT_FOUND, String::from("user not found")))?;
+
+    Ok(Json(ReadUser::from(db_user)))
+}
