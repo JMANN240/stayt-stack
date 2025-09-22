@@ -1,4 +1,5 @@
 [template]
 ignore = [
   "README.md",
+  "roboto.ttf",
 ]
