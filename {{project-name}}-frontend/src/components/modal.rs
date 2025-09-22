@@ -1,6 +1,6 @@
 use web_sys::{
-    HtmlDivElement, console,
-    wasm_bindgen::{JsCast, JsValue},
+    HtmlDivElement,
+    wasm_bindgen::JsCast,
 };
 use yew::prelude::*;
 

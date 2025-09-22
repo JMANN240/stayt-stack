@@ -86,7 +86,7 @@ pub fn LoginPage() -> Html {
                         LocalStorage::set("token", &token_response_text).unwrap();
 
                         token_context.dispatch(TokenAction::Set(token_response_text));
-                        navigator.push(&Route::Home);
+                        navigator.push(&Route::Root);
                     }
                     _ => {
                         error_text.set(Some(token_response_text));
