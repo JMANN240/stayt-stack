@@ -2,7 +2,7 @@ use argon2::{
     Argon2, PasswordHash, PasswordVerifier,
     password_hash::{PasswordHasher, SaltString, rand_core::OsRng},
 };
-use {{crate_name}}_api::ReadUser;
+use {{crate_name}}_lib::ReadUser;
 use sqlx::{prelude::FromRow, query, query_as, sqlite::SqliteQueryResult, QueryBuilder, SqlitePool};
 
 #[derive(FromRow)]

@@ -1,5 +1,5 @@
 use gloo_net::http::Request;
-use {{crate_name}}_api::{RegisterRequest, TokenRequest};
+use {{crate_name}}_lib::{RegisterRequest, TokenRequest};
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
 use yew_router::hooks::use_navigator;

@@ -1,6 +1,6 @@
 use gloo_net::http::Request;
 use gloo_storage::{LocalStorage, Storage};
-use {{crate_name}}_api::TokenRequest;
+use {{crate_name}}_lib::TokenRequest;
 use web_sys::HtmlInputElement;
 use yew::prelude::*;
 use yew_router::hooks::use_navigator;

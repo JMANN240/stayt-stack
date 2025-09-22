@@ -3,7 +3,7 @@ use axum::{
     extract::{Path, State},
     http::StatusCode,
 };
-use {{crate_name}}_api::ReadUser;
+use {{crate_name}}_lib::ReadUser;
 
 use crate::{AppState, db::user::DbUser, util::internal_server_error};
 
