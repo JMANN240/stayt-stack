@@ -5,7 +5,7 @@ use yew_router::prelude::*;
 use crate::{
     Route,
     components::{
-        nav::navlink::NavLink,
+        nav::nav_link::{{crate_name | pascal_case}}NavLink,
         token_provider::TokenContext,
     },
 };
