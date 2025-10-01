@@ -1,135 +1,127 @@
-use gloo::net::http::Request;
+use gloo::{net::http::Request, storage::{LocalStorage, Storage}};
 use {{crate_name}}_lib::{RegisterRequest, TokenRequest};
-use web_sys::HtmlInputElement;
+use web_sys::{HtmlInputElement, wasm_bindgen::JsCast};
 use yew::prelude::*;
+use yew_nav::use_hide_nav_menu;
 use yew_router::hooks::use_navigator;
 
 use crate::{
-    components::{button::{Button, ButtonType}, token_provider::{TokenAction, TokenContext}}, Route
+    components::{
+        button::{Button, ButtonType}, token_provider::{TokenAction, TokenContext}
+    }, Route
 };
 
 #[function_component]
 pub fn RegisterPage() -> Html {
+    use_hide_nav_menu(());
+
     let navigator = use_navigator().unwrap();
-    let token_context = use_context::<TokenContext>().expect("no token found");
+    let token_reducer = use_context::<TokenContext>().expect("no token context found");
 
-    let username_input_node_ref = use_node_ref();
-    let password_input_node_ref = use_node_ref();
-    let confirm_password_input_node_ref = use_node_ref();
+    let error_text_state = use_state(Option::default);
 
-    let error_text = use_state::<Option<String>, _>(|| None);
+    let username_state = use_state(String::default);
+    let password_state = use_state(String::default);
+    let confirm_password_state = use_state(String::default);
 
-    let username = use_state(String::default);
-    let password = use_state(String::default);
-    let confirm_password = use_state(String::default);
+    let on_username_input = {
+        let username_state = username_state.clone();
 
-    let handle_username_change = {
-        let username = username.clone();
-        let username_input_node_ref = username_input_node_ref.clone();
-
-        Callback::from(move |_| {
-            let username_input = username_input_node_ref.cast::<HtmlInputElement>();
-
-            if let Some(username_input) = username_input {
-                username.set(username_input.value());
+        Callback::from(move |event: InputEvent| {
+            if let Some(username_input) = event
+                .target()
+                .and_then(|target| target.dyn_into::<HtmlInputElement>().ok())
+            {
+                username_state.set(username_input.value());
             }
         })
     };
 
-    let handle_password_change = {
-        let password = password.clone();
-        let password_input_node_ref = password_input_node_ref.clone();
+    let on_password_input = {
+        let password_state = password_state.clone();
 
-        Callback::from(move |_| {
-            let password_input = password_input_node_ref.cast::<HtmlInputElement>();
-
-            if let Some(password_input) = password_input {
-                password.set(password_input.value());
+        Callback::from(move |event: InputEvent| {
+            if let Some(password_input) = event
+                .target()
+                .and_then(|target| target.dyn_into::<HtmlInputElement>().ok())
+            {
+                password_state.set(password_input.value());
             }
         })
     };
 
-    let handle_confirm_password_change = {
-        let confirm_password = confirm_password.clone();
-        let confirm_password_input_node_ref = confirm_password_input_node_ref.clone();
+    let on_confirm_password_input = {
+        let confirm_password_state = confirm_password_state.clone();
 
-        Callback::from(move |_| {
-            let confirm_password_input = confirm_password_input_node_ref.cast::<HtmlInputElement>();
-
-            if let Some(confirm_password_input) = confirm_password_input {
-                confirm_password.set(confirm_password_input.value());
+        Callback::from(move |event: InputEvent| {
+            if let Some(confirm_password_input) = event
+                .target()
+                .and_then(|target| target.dyn_into::<HtmlInputElement>().ok())
+            {
+                confirm_password_state.set(confirm_password_input.value());
             }
         })
     };
 
-    let handle_submit = {
-        let error_text = error_text.clone();
+    let on_submit = {
+        let error_text_state = error_text_state.clone();
 
-        let username = username.clone();
-        let password = password.clone();
-        let confirm_password = confirm_password.clone();
+        let username_state = username_state.clone();
+        let password_state = password_state.clone();
+        let confirm_password_state = confirm_password_state.clone();
 
         Callback::from(move |event: SubmitEvent| {
             let navigator = navigator.clone();
-            let token_context = token_context.clone();
+            let token_reducer = token_reducer.clone();
 
-            let error_text = error_text.clone();
+            let error_text_state = error_text_state.clone();
 
-            let username = username.clone();
-            let password = password.clone();
-            let confirm_password = confirm_password.clone();
+            let username_state = username_state.clone();
+            let password_state = password_state.clone();
+            let confirm_password_state = confirm_password_state.clone();
 
             event.prevent_default();
 
             wasm_bindgen_futures::spawn_local(async move {
                 let register_request = RegisterRequest {
-                    username: (*username).clone(),
-                    password: (*password).clone(),
-                    confirm_password: (*confirm_password).clone(),
+                    username: (*username_state).clone(),
+                    password: (*password_state).clone(),
+                    confirm_password: (*confirm_password_state).clone(),
                 };
 
                 let register_response = Request::post("/api/register")
-                    .header("Content-Type", "application/json")
-                    .body(serde_json::to_string(&register_request).unwrap())
+                    .json(&register_request)
                     .unwrap()
                     .send()
                     .await
                     .unwrap();
 
-                let register_response_status = register_response.status();
+                if register_response.ok() {
+                    let token_request = TokenRequest {
+                        username: (*username_state).clone(),
+                        password: (*password_state).clone(),
+                    };
 
-                match register_response_status {
-                    201 => {
-                        let token_request = TokenRequest {
-                            username: (*username).clone(),
-                            password: (*password).clone(),
-                        };
-    
-                        let token_response = Request::post("/api/token")
-                            .header("Content-Type", "application/json")
-                            .body(serde_json::to_string(&token_request).unwrap())
-                            .unwrap()
-                            .send()
-                            .await
-                            .unwrap();
-    
-                        let token_response_status = token_response.status();
-                        let token_response_text = token_response.text().await.unwrap();
-    
-                        match token_response_status {
-                            200 => {
-                                token_context.dispatch(TokenAction::Set(token_response_text));
-                                navigator.push(&Route::Root);
-                            },
-                            _ => {
-                                error_text.set(Some(token_response_text));
-                            }
-                        }
-                    },
-                    _ => {
-                        let register_response_text = register_response.text().await.unwrap();
-                        error_text.set(Some(register_response_text));
+                    let token_response = Request::post("/api/token")
+                        .json(&token_request)
+                        .unwrap()
+                        .send()
+                        .await
+                        .unwrap();
+
+                    let token_response_text = token_response.text().await.unwrap();
+
+                    if token_response.ok() {
+                        LocalStorage::set("token", &token_response_text).unwrap();
+                        token_reducer.dispatch(TokenAction::Set(token_response_text.clone()));
+                        navigator.push(&Route::Root);
+                    } else {
+                        error_text_state.set(Some(token_response_text));
                     }
+                } else {
+                    let register_response_text = register_response.text().await.unwrap();
+
+                    error_text_state.set(Some(register_response_text));
                 }
             });
         })
@@ -137,14 +129,14 @@ pub fn RegisterPage() -> Html {
 
     html! {
         <main class="flex flex-col items-center p-8">
-            <div class="border p-4">
-                <form class="flex flex-col gap-2" onsubmit={handle_submit}>
-                    if let Some(error_text) = &(*error_text) {
+            <div class="border p-4 w-full sm:w-64">
+                <form class="flex flex-col gap-2" onsubmit={on_submit}>
+                    if let Some(error_text) = &*error_text_state {
                         <p class="text-red-500">{error_text}</p>
                     }
-                    <input ref={username_input_node_ref} class="outline-offset-1 focus:outline-1 border p-1" value={(*username).clone()} onchange={handle_username_change} type="text" name="username" placeholder="Username" required=true />
-                    <input ref={password_input_node_ref} class="outline-offset-1 focus:outline-1 border p-1" value={(*password).clone()} onchange={handle_password_change} type="password" name="password" placeholder="Password" required=true />
-                    <input ref={confirm_password_input_node_ref} class="outline-offset-1 focus:outline-1 border p-1" value={(*confirm_password).clone()} onchange={handle_confirm_password_change} type="password" name="confirm-password" placeholder="Confirm Password" required=true />
+                    <input class="outline-offset-1 focus:outline-1 border p-1" value={(*username_state).clone()} oninput={on_username_input} type="text" name="username" placeholder="Username" required=true />
+                    <input class="outline-offset-1 focus:outline-1 border p-1" value={(*password_state).clone()} oninput={on_password_input} type="password" name="password" placeholder="Password" required=true />
+                    <input class="outline-offset-1 focus:outline-1 border p-1" value={(*confirm_password_state).clone()} oninput={on_confirm_password_input} type="password" name="confirm-password" placeholder="Confirm Password" required=true />
                     <Button r#type={ButtonType::Submit}>{ "Register" }</Button>
                 </form>
             </div>

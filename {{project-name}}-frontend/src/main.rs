@@ -1,7 +1,8 @@
 use yew::prelude::*;
+use yew_nav::NavMenuStateProvider;
 use yew_router::prelude::*;
 
-use crate::components::navbar::Navbar;
+use crate::components::nav::nav_bar::{{crate_name | pascal_case}}NavBar;
 use crate::components::token_provider::TokenProvider;
 use crate::pages::{login::LoginPage, logout::LogoutPage, register::RegisterPage, root::RootPage};
 
@@ -42,12 +43,14 @@ fn switch(routes: Route) -> Html {
 pub fn App() -> Html {
     html! {
         <TokenProvider>
-            <BrowserRouter>
-                <header class="border-b px-4 py-2">
-                    <Navbar />
-                </header>
-                <Switch<Route> render={switch} />
-            </BrowserRouter>
+            <NavMenuStateProvider>
+                <BrowserRouter>
+                    <header class="border-b px-4 py-2">
+                        <{{crate_name | pascal_case}}NavBar />
+                    </header>
+                    <Switch<Route> render={switch} />
+                </BrowserRouter>
+            </NavMenuStateProvider>
         </TokenProvider>
     }
 }
